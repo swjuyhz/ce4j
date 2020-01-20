@@ -90,7 +90,7 @@
 				}
 			}
 		}
-### 自定义执行结果判定策略、使用errorStream流、集命令行errorStream流输出
+### 自定义执行结果判定策略、使用errorStream流、收集命令行errorStream流输出
 #### stdoutStream 默认开启，否则可能导致命令行执行堵塞，除非命令行执行后没有该流的输出
 		Executor executor2 = BaseExecutor
 					.newBuilder()
