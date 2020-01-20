@@ -4,15 +4,15 @@
 由于本人所在公司恰好使用java调用命令行的操作比较多，于是基于java.lang.Runtime做了一套封装，以简化java调用命令行的编码。
 本着工具的简单化，封装过程没有使用第三方插件，采用策略模式提供命令执行结果的判断自定义，采用builder模式提供Executor的自定义构建。
 # 使用demo
-## 使用默认配置Executor
+## 默认配置Executor
 		//插件默认：使用Stdout输出流，不使用错误输出流，不收集命令行输出，不判定执行结果（即使用空判定策略)
 		Executor executor = BaseExecutor.newBuilder().build();
 		/*或者（效果同上，此为插件默认配置,完整版）：
 		Executor executor3 = BaseExecutor
-							.newBuilder()
-							.useStdoutStreamGobbler(true, CheckStrategy.NONE_CHECK_STRATEGY_INSTANCE)
-							.collectAllOutputStdout(false)
-							.build();
+					.newBuilder()
+					.useStdoutStreamGobbler(true, CheckStrategy.NONE_CHECK_STRATEGY_INSTANCE)
+					.collectAllOutputStdout(false)
+					.build();
 		*/
 		//window 
 		//单条命令行
