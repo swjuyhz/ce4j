@@ -5,7 +5,7 @@
 本着工具的简单化，封装过程没有使用第三方插件，采用策略模式提供命令执行结果的判断自定义，采用builder模式提供Executor的自定义构建。
 # 使用demo
 ## 默认配置Executor
-		//插件默认：使用Stdout输出流，不使用错误输出流，不收集命令行输出，不判定执行结果（即使用空判定策略)
+### 插件默认：使用Stdout输出流，不使用错误输出流，不收集命令行输出，不判定执行结果（即使用空判定策略)
 		Executor executor = BaseExecutor.newBuilder().build();
 		/*或者（效果同上，此为插件默认配置,完整版）：
 		Executor executor3 = BaseExecutor
@@ -85,6 +85,102 @@
 			if(stdouResult.getStatus() == Result.Status.SUCCESS) {
 				//收集的命令行执行的STDOUT输出(Runtime.getRuntime().exec(comandLine).getInputStream())
 				List<String> lines = stdouResult3.getData();
+				for(String line:lines) {
+					System.out.println(line);
+				}
+			}
+		}
+### 自定义执行结果判定策略、使用errorStream流、集命令行errorStream流输出
+#### stdoutStream 默认开启，否则可能导致命令行执行堵塞，除非命令行执行后没有该流的输出
+		Executor executor2 = BaseExecutor
+					.newBuilder()
+					//使用错误输出流Runtime.getRuntime().exec(comandLine).getErrorStream()
+					.useErrorStreamGobbler(true, new CheckStrategy() {
+					    @Override //自定义策略
+					    public Result endCheck(String lastPrint) {
+					       return new Result(Result.Status.UNKNOWN, "未检查执行结果，执行结果未知。", null);
+					    }})
+					.collectAllOutputError(true)//收集错误流输出的命令行
+					.build();
+		//window 
+		//单条命令行
+		if(executor1.isWin()) {
+			ExecutedResult res = executor2.execute("cmd /c dir");
+			System.out.println(res);
+			Result stdouResult = res.getStdoutResult();
+			if(stdouResult.getStatus() == Result.Status.SUCCESS) {
+				//收集的命令行执行的STDOUT输出(Runtime.getRuntime().exec(comandLine).getInputStream())
+				List<String> lines = stdouResult.getData();
+				for(String line:lines) {
+					System.out.println(line);
+				}
+			}
+			
+			Result errorResult = res.getErrorResult();
+			if(stdouResult.getStatus() == Result.Status.UNKNOWN) {//依据自定义的策略
+				//收集的命令行执行的ERROR输出(Runtime.getRuntime().exec(comandLine).getErrorStream())
+				List<String> lines = errorResult.getData();
+				for(String line:lines) {
+					System.out.println(line);
+				}
+			}
+			
+			
+			//多条命令行
+			ExecutedResult res1 = executor2.execute("cmd /c C: && cd C:\\Users\\zhengyh\\Desktop\\learning && dir");
+			System.out.println(res1);
+			Result stdouResult1 = res1.getStdoutResult();
+			if(stdouResult1.getStatus() == Result.Status.SUCCESS) {
+				//收集的命令行执行的STDOUT输出(Runtime.getRuntime().exec(comandLine).getInputStream())
+				List<String> lines = stdouResult1.getData();
+				for(String line:lines) {
+					System.out.println(line);
+				}
+			}
+			Result errorResult1 = res1.getErrorResult();
+			if(stdouResult.getStatus() == Result.Status.UNKNOWN) {//依据自定义的策略
+				//收集的命令行执行的ERROR输出(Runtime.getRuntime().exec(comandLine).getErrorStream())
+				List<String> lines = errorResult1.getData();
+				for(String line:lines) {
+					System.out.println(line);
+				}
+			}
+		}else {
+			//Linux
+			//单命令行
+			ExecutedResult res2 = executor2.execute("ls");
+			System.out.println(res2);
+			Result stdouResult = res2.getStdoutResult();
+			if(stdouResult.getStatus() == Result.Status.SUCCESS) {
+				//收集的命令行执行的STDOUT输出(Runtime.getRuntime().exec(comandLine).getInputStream())
+				List<String> lines = stdouResult.getData();
+				for(String line:lines) {
+					System.out.println(line);
+				}
+			}
+			Result errorResult1 = res2.getErrorResult();
+			if(stdouResult.getStatus() == Result.Status.UNKNOWN) {//依据自定义的策略
+				//收集的命令行执行的ERROR输出(Runtime.getRuntime().exec(comandLine).getErrorStream())
+				List<String> lines = errorResult1.getData();
+				for(String line:lines) {
+					System.out.println(line);
+				}
+			}
+			//多命令行
+			ExecutedResult res3 = executor2.executeMutilShell(Arrays.asList("cd /root/deploy/zyh/bin/poems_generator/", "python3 compose_poem.py 佳"));
+			System.out.println(res3);
+			Result stdouResult3 = res3.getStdoutResult();
+			if(stdouResult.getStatus() == Result.Status.SUCCESS) {
+				//收集的命令行执行的STDOUT输出(Runtime.getRuntime().exec(comandLine).getInputStream())
+				List<String> lines = stdouResult3.getData();
+				for(String line:lines) {
+					System.out.println(line);
+				}
+			}
+			Result errorResult2 = res3.getErrorResult();
+			if(stdouResult.getStatus() == Result.Status.UNKNOWN) {//依据自定义的策略
+				//收集的命令行执行的ERROR输出(Runtime.getRuntime().exec(comandLine).getErrorStream())
+				List<String> lines = errorResult2.getData();
 				for(String line:lines) {
 					System.out.println(line);
 				}
