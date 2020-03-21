@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.zyh.ce4j.domain.ExecutedResult;
@@ -102,7 +103,7 @@ public interface Executor {
 	    }
 	    
 	    public List<String> getOutputLines() {
-	    	return this.outLines == null ? new ArrayList<>() : this.outLines;
+	    	return this.outLines == null ? Collections.emptyList() : Collections.unmodifiableList(this.outLines);
 	    }
 	    
 	    /**
@@ -112,7 +113,7 @@ public interface Executor {
 	    public Result exeResult(CheckStrategy ces) {
 	    	Result er = ces.endCheck(lastPrint);
 	    	if(collectAllOutput) {
-	    		er.setData(outLines);
+	    		er.setData(Collections.unmodifiableList(this.outLines));
 	    	}
 	    	return er;
 	    }
