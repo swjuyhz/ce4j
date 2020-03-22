@@ -1,8 +1,15 @@
 # ce4j简介
         基于java.lang.Runtime封装的用于简化java调用命令行的工具。
 在使用java原生库的java.lang.Runtime进行命令行调用的过程中，需要重复编写不少代码。
-由于本人所在公司恰好使用java调用命令行的操作比较多，于是基于java.lang.Runtime做了一套封装，封装内部做了输出流的处理，解决出现管道阻塞问题，使用者可以忽略输入输出流的管道阻塞问题，直接进行命令行调用并收集执行输出和结果。此工具可以打打简化java调用命令行的编码。
+由于本人所在公司恰好使用java调用命令行的操作比较多，于是基于java.lang.Runtime做了一套封装，封装内部做了输出流的处理，解决管道阻塞等问题，使用者可以忽略输出流的管道阻塞问题，直接进行命令行调用并收集执行输出和结果。此工具可以大大简化java调用命令行的编码。
 本着工具的简单化，封装过程没有使用第三方插件，采用策略模式提供命令执行结果的判断自定义，采用builder模式提供Executor的自定义构建。
+#快速开始
+##maven依赖
+	<dependency>
+		<groupId>com.github.swjuyhz</groupId>
+  		<artifactId>ce4j</artifactId>
+  		<version>1.0</version>
+	</dependency>
 # 使用demo
 ## 默认配置Executor
 ### 插件默认：使用Stdout输出流，不使用错误输出流，不收集命令行输出，不判定执行结果（即使用空判定策略)
