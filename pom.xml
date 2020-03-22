@@ -2,15 +2,38 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.zyh</groupId>
+  <groupId>com.github.swjuyhz</groupId>
   <artifactId>ce4j</artifactId>
   <version>1.0</version>
   <packaging>jar</packaging>
-
   <name>ce4j</name>
   <description>Simplify command invoking by java</description>
-  <url>http://maven.apache.org</url>
-
+  <url>https://github.com/swjuyhz/ce4j</url>
+  
+  <scm>
+    <url>https://github.com/swjuyhz/ce4j</url>
+    <connection>https://github.com/swjuyhz/ce4j.git</connection>
+  </scm>
+  
+  <licenses>
+    <license>
+       <name>MIT License</name>
+       <url>https://opensource.org/licenses/MIT</url>
+    </license>
+  </licenses>
+  
+  <developers>
+    <developer>
+      <name>river-rock</name>
+      <id>river-rock</id>
+      <email>1143875182@qq.com</email>
+      <roles>
+        <role>Developer</role>
+      </roles>
+      <timezone>+8</timezone>
+    </developer>
+  </developers>
+  
   <properties>
   	<java.version>1.8</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -25,8 +48,9 @@
     </dependency>
   </dependencies>
   <build>
-  	<!-- finalName指定打包生成的文件名，默认为工程名-版本号 -->
+  	<!-- finalName指定打包生成的文件名，默认为工程名-版本号 
     <finalName>ce4j-1.0</finalName>
+    -->
     <plugins>
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -37,11 +61,13 @@
                 <source>1.8</source>
                 <!-- class的编译器版本 -->
                 <target>1.8</target>
+                <!--
                 <archive>
                     <manifest>
                         <mainClass>com.zyh.command.ExecuteDemo</mainClass>
                     </manifest>
                 </archive>
+                -->
             </configuration>
         </plugin>
 		<plugin>
@@ -52,6 +78,66 @@
             	<skip>true</skip>
             </configuration>
         </plugin>
+        <!-- deploy to maven center start -->
+        <!--生成Source jar文件-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!--生成Javadoc，关闭doclint,避免注解检查不通过-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <additionalparam>-Xdoclint:none</additionalparam>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!--Maven GPG插件用于使用以下配置对组件进行签名-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!--Nexus Staging Maven插件是将组件部署到OSSRH并将其发布到Central Repository的推荐方法-->
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.7</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>sonatype-nexus-staging</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+            <!-- deploy to maven center start -->
     </plugins>
   </build>
 </project>
