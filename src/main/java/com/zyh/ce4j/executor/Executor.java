@@ -9,7 +9,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import com.zyh.ce4j.domain.ExecutedResult;
@@ -26,6 +25,13 @@ public interface Executor {
 	 * @return
 	 */
 	public ExecutedResult execute(String comandLine);
+	
+	/**
+	 * 以数组方式组织命令行，推荐当命令行中文件存在空格等
+	 * @param cmdarray
+	 * @return
+	 */
+	public ExecutedResult execute(String[] cmdarray);
 	
 	/**
 	 * 该方法只支持Linux下shell多命令行，win多命令行使用[execute(String comandLine)]即可。
@@ -103,7 +109,7 @@ public interface Executor {
 	    }
 	    
 	    public List<String> getOutputLines() {
-	    	return this.outLines == null ? Collections.emptyList() : Collections.unmodifiableList(this.outLines);
+	    	return this.outLines == null ? new ArrayList<>() : this.outLines;
 	    }
 	    
 	    /**
@@ -113,7 +119,7 @@ public interface Executor {
 	    public Result exeResult(CheckStrategy ces) {
 	    	Result er = ces.endCheck(lastPrint);
 	    	if(collectAllOutput) {
-	    		er.setData(Collections.unmodifiableList(this.outLines));
+	    		er.setData(outLines);
 	    	}
 	    	return er;
 	    }
