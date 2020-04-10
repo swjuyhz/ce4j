@@ -18,6 +18,9 @@ public class BaseExecutor implements Executor{
 	private boolean collectAllOutputError;
 	private CheckStrategy errorCes;
 	
+	private long timeout = 30;
+	private TimeUnit timeUnit = TimeUnit.MINUTES;
+	
 	
 	private BaseExecutor(Builder builder) {
 		this.useStdoutStreamGobbler = builder.useStdoutStreamGobbler;
@@ -27,6 +30,9 @@ public class BaseExecutor implements Executor{
 		this.useErrorStreamGobbler = builder.useErrorStreamGobbler;
 		this.collectAllOutputError = builder.collectAllOutputError;
 		this.errorCes = builder.errorCes;
+		
+		this.timeout = builder.timeout;
+    	this.timeUnit = builder.timeUnit;
 	}
 	
 	public static Builder newBuilder() {
@@ -44,6 +50,9 @@ public class BaseExecutor implements Executor{
 		private boolean collectAllOutputError = false;
 		private CheckStrategy errorCes;
         
+		private long timeout = 30;
+		private TimeUnit timeUnit = TimeUnit.MINUTES;
+		
 		public class StdoutStreamGobblerBuilder{
 			private Builder builder;
 			public StdoutStreamGobblerBuilder(Builder builder){
@@ -80,6 +89,16 @@ public class BaseExecutor implements Executor{
             return new ErrorStreamGobblerBuilder(this);
         }
         
+        public Builder setTimeout(Long timeout, TimeUnit timeUnit) {
+        	if(null != timeout) {
+        		this.timeout = timeout;
+        	}
+        	if(null != timeUnit) {
+            	this.timeUnit = timeUnit;
+        	}
+        	return this;
+        }
+        
         public BaseExecutor build() {
             return new BaseExecutor(this);
         }
@@ -104,7 +123,7 @@ public class BaseExecutor implements Executor{
     		}
         	stdoutGobbler.start();
     	}
-    	pr.waitFor(30,TimeUnit.MINUTES);//等待该命令行进程执行完毕,30分钟后自动放弃
+    	pr.waitFor(this.timeout, this.timeUnit);//等待该命令行进程执行完毕,默认30分钟后自动放弃
     	if(this.useErrorStreamGobbler) {
         	Result res = errorGobbler.exeResult(this.errorCes);
         	result.setStatus(res.getStatus());
@@ -155,6 +174,19 @@ public class BaseExecutor implements Executor{
 			processOutputHandle(result, pr, String.join("&&", comandLine), mcs);
 		} catch (IOException | InterruptedException e) {
 			result.setErrorResult(new Result(Result.Status.FAILURE, String.format("execute command line[%s] failed: {%s}",comandLine,e.getMessage()), null));
+		}
+		return result;
+	}
+
+	@Override
+	public ExecutedResult execute(String[] cmdarray) {
+		ExecutedResult result = new ExecutedResult();
+		try {
+        	Process pr = Runtime.getRuntime().exec(cmdarray);
+        	processOutputHandle(result,pr, String.join(" ", cmdarray), null);
+		} catch (IOException | InterruptedException e) {
+			result.setStatus(Result.Status.FAILURE);
+			result.setErrorResult(new Result(Result.Status.FAILURE, String.format("execute command line[%s] failed: {%s}",String.join(" ", cmdarray),e.getMessage()), null));
 		}
 		return result;
 	}
