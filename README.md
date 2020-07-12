@@ -8,7 +8,7 @@
 	<dependency>
 		<groupId>com.github.swjuyhz</groupId>
   		<artifactId>ce4j</artifactId>
-  		<version>1.0</version>
+  		<version>1.1</version>
 	</dependency>
 # 使用demo
 ## 默认配置Executor
