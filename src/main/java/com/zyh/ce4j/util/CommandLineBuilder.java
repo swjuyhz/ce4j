@@ -31,9 +31,11 @@ public class CommandLineBuilder {
 		}
 		
 		private void fixAnd() {
-			String last = cmds.get(cmds.size() - 1);
-			if(!last.equals("/c") && !last.equals(and)) {
-				cmds.add(and);
+			if(!cmds.isEmpty()){
+				String last = cmds.get(cmds.size() - 1);
+				if(!last.equals("/c") && !last.equals(and)) {
+					cmds.add(and);
+				}
 			}
 		}
 		
