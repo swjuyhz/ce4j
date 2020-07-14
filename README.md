@@ -11,6 +11,7 @@
   		<version>1.1</version>
 	</dependency>
 # 使用demo [示例](https://github.com/swjuyhz/ce4j/blob/master/src/test/java/com/zyh/comand/ExecuteDemo.java)
+####命令行的编写推荐使用命令行构建工具[CommandLineBuilder](https://github.com/swjuyhz/ce4j/blob/master/src/main/java/com/zyh/ce4j/util/CommandLineBuilder.java)
 ## 默认配置Executor
 ### 插件默认：使用Stdout输出流，不使用错误输出流，不收集命令行输出，不判定执行结果（即使用空判定策略)
 		Executor executor = BaseExecutor.newBuilder().build();
