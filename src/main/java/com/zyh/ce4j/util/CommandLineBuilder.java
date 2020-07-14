@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.zyh.ce4j.domain.ExecutedResult;
-import com.zyh.ce4j.executor.BaseExecutor;
-
 public class CommandLineBuilder {
 	private CommandLineBuilder() {}
 
@@ -58,7 +55,12 @@ public class CommandLineBuilder {
 		}
 		
 		//another command: TO DO 
-		
+		/**
+		 * 自行制定命令及其参数
+		 * @param goal
+		 * @param arguments
+		 * @return
+		 */
 		public CmdBuilder goal(String goal, String ...arguments) {
 			fixAnd();
 			cmds.add(goal);
@@ -94,6 +96,11 @@ public class CommandLineBuilder {
 			return this;
 		}
 		
+		public ShellBuilder ls() {
+			cmds.add("ls");
+			return this;
+		}
+		
 		public ShellBuilder chmod(String filePath, int privilegeCode) {
 			cmds.add("chmod " + privilegeCode + " " + filePath);
 			return this;
@@ -102,7 +109,7 @@ public class CommandLineBuilder {
 		//another command: TO DO 
 		
 		/**
-		 * 需执行的程序及其参数
+		 * 自行制定命令及其参数
 		 * @param goal
 		 * @param arguments
 		 * @return
@@ -114,21 +121,26 @@ public class CommandLineBuilder {
 			cmds.add(goal);
 			return this;
 		}
+		
+		/**
+		 * The result of this method just be used for ce4j. ce4j see: https://github.com/swjuyhz/ce4j
+		 * @return
+		 */
 		public List<String> toList() {
 			return cmds;
 		}
 	}
 	
 	public static void main(String[] args) {
-		BaseExecutor e = BaseExecutor.newBuilder().build();
+		com.zyh.ce4j.executor.BaseExecutor e = com.zyh.ce4j.executor.BaseExecutor.newBuilder().build();
 		String cmd = CommandLineBuilder.win().cd("C:\\Users\\zyh\\Desktop\\progress").dir().cd("D:\\360").dir().toString();
 		String[] cmds = CommandLineBuilder.win().cd("C:\\Users\\zyh\\Desktop\\progress").dir().cd("D:\\360").dir().toArray();
 		System.out.println("-------------: " + cmd);
-		ExecutedResult res = e.execute(cmd);
+		com.zyh.ce4j.domain.ExecutedResult res = e.execute(cmd);
 		System.out.println("-------------分割线A---------------");
 		e.execute(cmds);
 		System.out.println("-------------分割线B---------------");
-		ExecutedResult res1 = e.execute("cmd /c C: && cd C:\\Users\\zyh\\Desktop\\progress && dir && D: && cd D:\\360 && dir");
+		com.zyh.ce4j.domain.ExecutedResult res1 = e.execute("cmd /c C: && cd C:\\Users\\zyh\\Desktop\\progress && dir && D: && cd D:\\360 && dir");
 		System.out.println("-------------分割线---------------");
 //		System.out.println(res1.getStdoutResult().getMsg());
 		e.execute(new String[] {"cmd","/c","C:","&&","cd","C:\\Users\\zyh\\Desktop\\progress","&&","dir"});
