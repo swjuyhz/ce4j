@@ -1,7 +1,5 @@
 package com.zyh.ce4j.strategy;
 
-import java.util.Arrays;
-
 import com.zyh.ce4j.domain.Result;
 import com.zyh.ce4j.util.StringUtils;
 
@@ -18,7 +16,7 @@ public class ColonEndStrategy implements CheckStrategy {
     	if(StringUtils.isNotBlank(lastPrint) && lastPrint.contains(":")) {
     		String[] tags = lastPrint.split(":");
     		if(tags.length < 2 ) {
-    			return new Result(Result.Status.FAILURE, "处理输出违规。", Arrays.asList(tags));
+    			return new Result(Result.Status.FAILURE, lastPrint);
     		}
     		String codeStr = tags[0].trim();
     		//此处假定命令行执行结果,最后输出行： 0:xxxxxxx,作为成功
@@ -28,9 +26,9 @@ public class ColonEndStrategy implements CheckStrategy {
     		} else {
     			status = Result.Status.FAILURE;
     		}
-    		return new Result(status, tags[1], null);
+    		return new Result(status, tags[1]);
     	}
-    	return new Result(Result.Status.FAILURE, "处理输出违规。", null);
+    	return new Result(Result.Status.FAILURE, lastPrint);
 	}
 
 }
