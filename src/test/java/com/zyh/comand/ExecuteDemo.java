@@ -107,7 +107,7 @@ public class ExecuteDemo {
 								.useErrorStreamGobbler(true, new CheckStrategy() {
 									@Override //自定义策略
 									public Result endCheck(String lastPrint) {
-										return new Result(Result.Status.UNKNOWN, "未检查执行结果，执行结果未知。", null);
+										return new Result(Result.Status.UNKNOWN, "未检查执行结果，执行结果未知。");
 									}})
 								.collectAllOutputError(true)//收集错误流输出的命令行
 								.build();
