@@ -154,7 +154,7 @@ public class BaseExecutor implements Executor{
         	processOutputHandle(result,pr, comandLine, null);
 		} catch (IOException | InterruptedException e) {
 			result.setStatus(Result.Status.FAILURE);
-			result.setErrorResult(new Result(Result.Status.FAILURE, String.format("execute command line[%s] failed: {%s}",comandLine,e.getMessage()), null));
+			result.setErrorResult(new Result(Result.Status.FAILURE, String.format("execute command line[%s] failed: {%s}",comandLine,e.getMessage())));
 		}
 		return result;
 	}
@@ -164,7 +164,7 @@ public class BaseExecutor implements Executor{
 		ExecutedResult result = new ExecutedResult();
 		if(isWin()) {
 			result.setStatus(Result.Status.REJECT);
-			result.setErrorResult(new Result(Result.Status.REJECT, "该方法不支持执行win的多命令行，推荐使用[execute(String comandLine)]", null));
+			result.setErrorResult(new Result(Result.Status.REJECT, "该方法不支持执行win的多命令行，推荐使用[execute(String comandLine)]"));
 			return result;
 		}
 		try {
@@ -173,7 +173,7 @@ public class BaseExecutor implements Executor{
 			MutilComandsStream mcs = new MutilComandsStream(pr.getOutputStream(), comandLine);
 			processOutputHandle(result, pr, String.join("&&", comandLine), mcs);
 		} catch (IOException | InterruptedException e) {
-			result.setErrorResult(new Result(Result.Status.FAILURE, String.format("execute command line[%s] failed: {%s}",comandLine,e.getMessage()), null));
+			result.setErrorResult(new Result(Result.Status.FAILURE, String.format("execute command line[%s] failed: {%s}",comandLine,e.getMessage())));
 		}
 		return result;
 	}
@@ -186,7 +186,7 @@ public class BaseExecutor implements Executor{
         	processOutputHandle(result,pr, String.join(" ", cmdarray), null);
 		} catch (IOException | InterruptedException e) {
 			result.setStatus(Result.Status.FAILURE);
-			result.setErrorResult(new Result(Result.Status.FAILURE, String.format("execute command line[%s] failed: {%s}",String.join(" ", cmdarray),e.getMessage()), null));
+			result.setErrorResult(new Result(Result.Status.FAILURE, String.format("execute command line[%s] failed: {%s}",String.join(" ", cmdarray),e.getMessage())));
 		}
 		return result;
 	}
