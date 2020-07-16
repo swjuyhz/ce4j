@@ -17,7 +17,7 @@ public interface CheckStrategy {
 		@Override
 		public Result endCheck(String lastPrint) {
 			// TODO Auto-generated method stub
-			return new Result(Result.Status.UNKNOWN, "未检查执行结果，执行结果未知。", null);
+			return new Result(Result.Status.UNKNOWN, "未检查执行结果，执行结果未知。");
 		}
 	};
 	
