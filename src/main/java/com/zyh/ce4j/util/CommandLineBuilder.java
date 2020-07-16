@@ -20,7 +20,7 @@ public class CommandLineBuilder {
 	 * @author zyh
 	 *
 	 */
-	static class CmdBuilder{
+	public static class CmdBuilder{
 		private String and = "&&";
 		private List<String> cmds;
 		private CmdBuilder(){
@@ -85,7 +85,7 @@ public class CommandLineBuilder {
 	 * @author zyh
 	 *
 	 */
-	static class ShellBuilder{
+	public static class ShellBuilder{
 		private List<String> cmds;
 		private ShellBuilder(){
 			cmds = new ArrayList<>();
@@ -116,7 +116,7 @@ public class CommandLineBuilder {
 		 */
 		public ShellBuilder goal(String goal, String ...arguments) {
 			if(null != arguments && arguments.length > 0) {
-				goal += String.join(" ", arguments);
+				goal += " " + String.join(" ", arguments);
 			}
 			cmds.add(goal);
 			return this;
