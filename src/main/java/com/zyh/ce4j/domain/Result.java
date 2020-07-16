@@ -21,11 +21,10 @@ public class Result{
 	public Result() {
 		super();
 	}
-	public Result(Status status, String msg, List<String> data) {
+	public Result(Status status, String msg) {
 		super();
 		this.status = status;
 		this.msg = msg;
-		this.data = data;
 	}
 	
 	
