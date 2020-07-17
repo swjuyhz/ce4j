@@ -3,6 +3,8 @@ package com.zyh.ce4j.util;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class CommandLineBuilder {
 	private CommandLineBuilder() {}
@@ -21,6 +23,10 @@ public class CommandLineBuilder {
 	 *
 	 */
 	public static class CmdBuilder{
+		/*
+		 *统一规则： 
+		 * 命令行的所有key和参数都加双引号--->解决输入参数带空格被截断的问题
+		 */
 		private String and = "&&";
 		private List<String> cmds;
 		private CmdBuilder(){
@@ -44,7 +50,7 @@ public class CommandLineBuilder {
 				cmds.add(and);
 			}
 			cmds.add("cd");
-			cmds.add(directory);
+			cmds.add("\""+directory+"\"");
 			return this;
 		}
 		
@@ -55,21 +61,23 @@ public class CommandLineBuilder {
 		}
 		
 		//another command: TO DO 
+		
 		/**
 		 * 自行制定命令及其参数
 		 * @param goal
 		 * @param arguments
 		 * @return
 		 */
-		public CmdBuilder goal(String goal, String ...arguments) {
+		public CmdBuilder goal(String goal, String... arguments) {
 			fixAnd();
 			cmds.add(goal);
 			if(null != arguments && arguments.length > 0) {
-				cmds.addAll(Arrays.asList(arguments));
+				cmds.addAll(Stream.of(arguments).map(a->"\"" + a + "\"").collect(Collectors.toList()));
 			}
 			return this;
 		}
 		
+		@Override
 		public String toString() {
 			return String.join(" ", cmds);
 		}
@@ -86,13 +94,17 @@ public class CommandLineBuilder {
 	 *
 	 */
 	public static class ShellBuilder{
+		/*
+		 *统一规则： 
+		 * 命令行的所有key和参数都加双引号--->解决输入参数带空格被截断的问题
+		 */
 		private List<String> cmds;
 		private ShellBuilder(){
 			cmds = new ArrayList<>();
 		}
 		
 		public ShellBuilder cd(String dir) {
-			cmds.add("cd " + dir);
+			cmds.add("cd " + "\"" + dir + "\"");
 			return this;
 		}
 		
@@ -102,23 +114,29 @@ public class CommandLineBuilder {
 		}
 		
 		public ShellBuilder chmod(String filePath, int privilegeCode) {
-			cmds.add("chmod " + privilegeCode + " " + filePath);
+			cmds.add("chmod " + privilegeCode + " \"" + filePath + "\"");
 			return this;
 		}
 		
 		//another command: TO DO 
 		
 		/**
-		 * 自行制定命令及其参数
-		 * @param goal
+		 * 自行制定命令及其参数，例子：
+		 * goal("node", "index.js", "--md", "### **请在这里编辑正文**", "--title", "主要功能"," --out-pdf", "/root/PPDC/files/download/54/1/20200717134739374/主要功能222.pdf")
+		 * 输出： node "index.js" "--md" "### **请在这里编辑正文**" "--title" "主要功能" "--out-pdf" "/root/PPDC/files/download/54/1/20200717134739374/主要功能222.pdf"
+		 * 通过全局加双引号解决空格截断的问题
+		 * @param goal 
 		 * @param arguments
 		 * @return
 		 */
-		public ShellBuilder goal(String goal, String ...arguments) {
+		public ShellBuilder goal(String goal, String... arguments) {
+			StringBuilder sb = new StringBuilder(goal);
 			if(null != arguments && arguments.length > 0) {
-				goal += " " + String.join(" ", arguments);
+				for(String arg : arguments) {
+					sb.append(" ").append("\"").append(arg).append("\"");
+				}
 			}
-			cmds.add(goal);
+			cmds.add(sb.toString());
 			return this;
 		}
 		
@@ -129,22 +147,23 @@ public class CommandLineBuilder {
 		public List<String> toList() {
 			return cmds;
 		}
+		
+		@Override
+		public String toString() {
+			return String.join(" && ", cmds);
+		}
 	}
 	
 	public static void main(String[] args) {
-		com.zyh.ce4j.executor.BaseExecutor e = com.zyh.ce4j.executor.BaseExecutor.newBuilder().build();
-		String cmd = CommandLineBuilder.win().cd("C:\\Users\\zyh\\Desktop\\progress").dir().cd("D:\\360").dir().toString();
-		String[] cmds = CommandLineBuilder.win().cd("C:\\Users\\zyh\\Desktop\\progress").dir().cd("D:\\360").dir().toArray();
-		System.out.println("-------------: " + cmd);
-		com.zyh.ce4j.domain.ExecutedResult res = e.execute(cmd);
-		System.out.println("-------------分割线A---------------");
-		e.execute(cmds);
-		System.out.println("-------------分割线B---------------");
-		com.zyh.ce4j.domain.ExecutedResult res1 = e.execute("cmd /c C: && cd C:\\Users\\zyh\\Desktop\\progress && dir && D: && cd D:\\360 && dir");
-		System.out.println("-------------分割线---------------");
-//		System.out.println(res1.getStdoutResult().getMsg());
-		e.execute(new String[] {"cmd","/c","C:","&&","cd","C:\\Users\\zyh\\Desktop\\progress","&&","dir"});
-		System.out.println("-------------分割线---------------");
-		e.execute(new String[] {"cmd","/c","C:","cd","C:\\Users\\zyh\\Desktop\\progress","dir"});
+		String cmd = CommandLineBuilder.win().cd("C:\\Users\\zyh\\Desktop\\progress").dir().cd("D:\\360").dir().goal("node", "index.js", "--md", "### **请在这里编辑正文**", "--title", "主要功能"," --out-pdf", "/root/PPDC/files/download/54/1/20200717134739374/主要功能222.pdf").goal("node", "index.js", "--md", "### **请在这里编辑正文**", "--title", "主要功能"," --out-pdf", "/root/PPDC/files/download/54/1/20200717134739374/主要功能222.pdf").toString();
+		String[] cmds = CommandLineBuilder.win().cd("C:\\Users\\zyh\\Desktop\\progress").dir().cd("D:\\360").dir().goal("node", "index.js", "--md", "### **请在这里编辑正文**", "--title", "主要功能"," --out-pdf", "/root/PPDC/files/download/54/1/20200717134739374/主要功能222.pdf").toArray();
+		System.out.println("WIN-------------: " + cmd);
+		System.out.println("WIN-------------: " + cmds);
+		String s = CommandLineBuilder.linux().goal("node", "index.js", "--md", "### **请在这里编辑正文**", "--title", "主要功能"," --out-pdf", "/root/PPDC/files/download/54/1/20200717134739374/主要功能222.pdf").goal("node", "index.js", "--md", "### **请在这里编辑正文**", "--title", "主要功能"," --out-pdf", "/root/PPDC/files/download/54/1/20200717134739374/主要功能222.pdf")
+								  .toString();
+		System.out.println("Linux-------------: " + s);
+		List<String> ss = CommandLineBuilder.linux().goal("node", "index.js", "--md", "### **请在这里编辑正文**", "--title", "主要功能"," --out-pdf", "/root/PPDC/files/download/54/1/20200717134739374/主要功能222.pdf")
+				  .toList();
+		System.out.println("Linux-------------: " + ss.get(0));
 	}
 }
