@@ -8,7 +8,7 @@
 	<dependency>
 		<groupId>com.github.swjuyhz</groupId>
   		<artifactId>ce4j</artifactId>
-  		<version>1.1</version>
+  		<version>1.2</version>
 	</dependency>
 # 使用demo [示例](https://github.com/swjuyhz/ce4j/blob/master/src/test/java/com/zyh/comand/ExecuteDemo.java)
 #命令行的编写推荐使用命令行构建工具[CommandLineBuilder](https://github.com/swjuyhz/ce4j/blob/master/src/main/java/com/zyh/ce4j/util/CommandLineBuilder.java)
